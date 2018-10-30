@@ -1,0 +1,31 @@
+SELECT GLCAT_GRP_NAME,
+  GLCAT_CAT_ID,
+  GLCAT_CAT_NAME,
+  GLCAT_MCAT_ID,
+  GLCAT_MCAT_NAME,
+  'MCat Level' "ISQ Defined",
+  IM_SPEC_MASTER_DESC,
+  DECODE(IM_SPEC_MASTER_BUYER_SELLER,0,'Both',1,'Buyer',2,'Seller') IM_SPEC_MASTER_BUYER_SELLER,
+  IM_CAT_SPEC_PRIORITY,
+  (SELECT WM_CONCAT(IM_SPEC_OPTIONS_DESC)
+  FROM IM_SPECIFICATION_OPTIONS
+  WHERE IM_SPECIFICATION_OPTIONS.FK_IM_SPEC_MASTER_ID = IM_SPEC_MASTER_ID
+  ) OPTIONS
+FROM im_cat_specification,
+  im_specification_master,
+  glcat_mcat,
+  GLCAT_CAT,
+  GLCAT_CAT_TO_MCAT,
+  GLCAT_GRP,
+  GLCAT_GRP_TO_CAT
+WHERE IM_CAT_SPEC_STATUS              = 1
+AND IM_CAT_SPEC_CATEGORY_TYPE         = 3
+AND fk_im_spec_master_id              = im_spec_master_id
+AND im_cat_spec_category_id           = glcat_mcat_id
+AND FK_GLCAT_MCAT_ID                  = GLCAT_MCAT_ID
+AND ISPRIME                           = -1
+AND GLCAT_CAT_TO_MCAT.FK_GLCAT_CAT_ID = GLCAT_CAT_ID
+AND GLCAT_CAT_ID                      = GLCAT_GRP_TO_CAT.FK_GLCAT_CAT_ID
+AND ISPRIMEGRP                        = -1
+AND GLCAT_GRP_ID                      = FK_GLCAT_GRP_ID
+;
